@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>TSV to SQL</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <form class="col s12">
+          <div class="row">
+            <div class="input-field col s6">
+              <i class="material-icons prefix">table_view</i>
+              <input id="table-name" type="text" class="validate" />
+              <label for="table-name">テーブル名</label>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="input-field col s12">
+              <i class="material-icons prefix">article</i>
+              <textarea id="text-input" class="materialize-textarea" wrap="off"></textarea>
+              <label for="text-input">TSVテキスト</label>
+            </div>
+          </div>
+
+          <div class="row center">
+            <a id="create" class="waves-effect waves-light btn"><i class="material-icons right">create</i>作成</a>
+          </div>
+
+          <div class="input-field col s12">
+            <i class="material-icons prefix">note_add</i>
+            <textarea id="sql-output" class="materialize-textarea" wrap="off" readonly></textarea>
+            <label for="sql-output">SQL</label>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="main.js"></script>
+  </body>
+</html>
