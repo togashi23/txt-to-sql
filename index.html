@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/vs.min.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
@@ -33,15 +34,18 @@
             <a id="create" class="waves-effect waves-light btn"><i class="material-icons right">create</i>作成</a>
           </div>
 
-          <div class="input-field col s12">
-            <i class="material-icons prefix">note_add</i>
-            <textarea id="sql-output" class="materialize-textarea" wrap="off" readonly></textarea>
-            <label for="sql-output">SQL</label>
+          <div class="row">
+            <div class="col s12">
+              <i class="material-icons prefix">note_add</i>
+              <pre class="scroll"><code id="sql-output" class="language-sql" contenteditable="true"></code></pre>
+            </div>
           </div>
         </form>
       </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
     <script src="main.js"></script>
   </body>
 </html>

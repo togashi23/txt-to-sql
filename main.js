@@ -55,7 +55,11 @@ INSERT INTO ${tableName} (${columnNames}) VALUES
 ${insertStr}
 COMMIT TRANSACTION;`;
 
-  document.getElementById('sql-output').value = sql;
+  const sqlOutput = document.getElementById('sql-output');
+  sqlOutput.innerHTML = sql;
+  hljs.configure({ ignoreUnescapedHTML: false });
+  hljs.highlightElement(sqlOutput);
+  hljs.lineNumbersBlock(sqlOutput);
 };
 
 document.getElementById('create').addEventListener('click', create);

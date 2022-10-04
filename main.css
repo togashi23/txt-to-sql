@@ -6,3 +6,12 @@ textarea.materialize-textarea {
   height: 35vh !important;
   overflow-y: auto;
 }
+
+.scroll {
+  height: 35vh;
+  overflow-y: auto;
+}
+
+.hljs-ln tr {
+  border: none;
+}
