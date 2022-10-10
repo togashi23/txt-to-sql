@@ -53,7 +53,8 @@ const create = () => {
   const sql = `BEGIN TRANSACTION;
 INSERT INTO ${tableName} (${columnNames}) VALUES
 ${insertStr}
-COMMIT TRANSACTION;`;
+ROLLBACK TRANSACTION;
+-- COMMIT TRANSACTION;`;
 
   const sqlOutput = document.getElementById('sql-output');
   sqlOutput.innerHTML = sql;
