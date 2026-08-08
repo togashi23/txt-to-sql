@@ -12,6 +12,37 @@ importScripts('${MONACO_CDN}/base/worker/workerMain.js');`;
 let inputEditor;
 let outputEditor;
 
+const THEME_KEY = 'txt-to-sql:theme';
+const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+// 手動で切り替えていない間はOSの設定に従う
+const isDark = () => (localStorage.getItem(THEME_KEY) ?? (darkQuery.matches ? 'dark' : 'light')) === 'dark';
+
+// テーマをhtml要素とMonacoの双方へ反映する
+const applyTheme = () => {
+  const dark = isDark();
+  document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+
+  // Monacoの読み込み前はcreate時のオプションで設定されるため何もしない
+  if (window.monaco) {
+    monaco.editor.setTheme(dark ? 'vs-dark' : 'vs');
+  }
+};
+
+applyTheme();
+
+document.getElementById('theme-toggle').addEventListener('click', () => {
+  localStorage.setItem(THEME_KEY, isDark() ? 'light' : 'dark');
+  applyTheme();
+});
+
+// OSの設定変更は、手動で切り替えていない場合のみ反映する
+darkQuery.addEventListener('change', () => {
+  if (!localStorage.getItem(THEME_KEY)) {
+    applyTheme();
+  }
+});
+
 const parseTsv = (str) => {
   let result = [];
   const lineEnd = new RegExp(/\r\n|\n|\r/, 'i');
@@ -76,11 +107,28 @@ ROLLBACK TRANSACTION;
   outputEditor.setValue(sql);
 };
 
+// SQLをクリップボードへコピーし、ボタンのラベルで結果を知らせる
+const copy = async () => {
+  const label = document.getElementById('copy-label');
+
+  try {
+    await navigator.clipboard.writeText(outputEditor.getValue());
+    label.textContent = 'コピーしました';
+  } catch {
+    label.textContent = 'コピーできません';
+  }
+
+  setTimeout(() => {
+    label.textContent = 'コピー';
+  }, 1500);
+};
+
 require.config({ paths: { vs: MONACO_CDN } });
 
 require(['vs/editor/editor.main'], () => {
   const commonOptions = {
-    theme: 'vs',
+    theme: isDark() ? 'vs-dark' : 'vs',
+    padding: { top: 8 },
     fontSize: 13,
     automaticLayout: true,
     minimap: { enabled: false },
@@ -102,5 +150,27 @@ require(['vs/editor/editor.main'], () => {
     language: 'sql',
   });
 
+  const copyButton = document.getElementById('copy');
+
+  // SQLが空のうちはコピーボタンを無効にしておく
+  const syncCopyButton = () => {
+    copyButton.disabled = outputEditor.getValue() === '';
+  };
+  outputEditor.onDidChangeModelContent(syncCopyButton);
+  syncCopyButton();
+
   document.getElementById('create').addEventListener('click', create);
+  copyButton.addEventListener('click', copy);
+
+  // Ctrl + Enter で作成（エディタ側の既定の割り当てを上書きする）
+  const createKeybinding = monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter;
+  inputEditor.addCommand(createKeybinding, create);
+  outputEditor.addCommand(createKeybinding, create);
+
+  document.getElementById('table-name').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      create();
+    }
+  });
 });
