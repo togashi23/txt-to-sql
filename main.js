@@ -76,11 +76,32 @@ ROLLBACK TRANSACTION;
   outputEditor.setValue(sql);
 };
 
+// SQLをクリップボードへコピーし、ボタンのラベルで結果を知らせる
+const copy = async () => {
+  const label = document.getElementById('copy-label');
+
+  try {
+    await navigator.clipboard.writeText(outputEditor.getValue());
+    label.textContent = 'コピーしました';
+  } catch {
+    label.textContent = 'コピーできません';
+  }
+
+  setTimeout(() => {
+    label.textContent = 'コピー';
+  }, 1500);
+};
+
 require.config({ paths: { vs: MONACO_CDN } });
 
 require(['vs/editor/editor.main'], () => {
+  // OSのカラースキームにエディタのテーマを合わせる
+  const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+  const currentTheme = () => (darkQuery.matches ? 'vs-dark' : 'vs');
+
   const commonOptions = {
-    theme: 'vs',
+    theme: currentTheme(),
+    padding: { top: 8 },
     fontSize: 13,
     automaticLayout: true,
     minimap: { enabled: false },
@@ -102,5 +123,31 @@ require(['vs/editor/editor.main'], () => {
     language: 'sql',
   });
 
+  darkQuery.addEventListener('change', () => {
+    monaco.editor.setTheme(currentTheme());
+  });
+
+  const copyButton = document.getElementById('copy');
+
+  // SQLが空のうちはコピーボタンを無効にしておく
+  const syncCopyButton = () => {
+    copyButton.disabled = outputEditor.getValue() === '';
+  };
+  outputEditor.onDidChangeModelContent(syncCopyButton);
+  syncCopyButton();
+
   document.getElementById('create').addEventListener('click', create);
+  copyButton.addEventListener('click', copy);
+
+  // Ctrl + Enter で作成（エディタ側の既定の割り当てを上書きする）
+  const createKeybinding = monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter;
+  inputEditor.addCommand(createKeybinding, create);
+  outputEditor.addCommand(createKeybinding, create);
+
+  document.getElementById('table-name').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      create();
+    }
+  });
 });

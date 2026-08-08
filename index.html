@@ -1,47 +1,84 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
   <head>
     <meta charset="utf-8" />
     <title>TSV to SQL</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
   <body>
-    <div class="container">
-      <div class="row">
-        <form class="col s12">
-          <div class="row">
-            <div class="input-field col s6">
-              <i class="material-icons prefix">table_view</i>
-              <input id="table-name" type="text" class="validate" />
-              <label for="table-name">テーブル名</label>
-            </div>
-          </div>
+    <!-- ヘッダー兼ツールバー -->
+    <header class="app-bar">
+      <h1 class="app-title">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+          <ellipse cx="12" cy="5" rx="9" ry="3" />
+          <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+          <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+        </svg>
+        TSV to SQL
+      </h1>
 
-          <div class="row">
-            <div class="col s12">
-              <div class="editor-label"><i class="material-icons">article</i>TSVテキスト</div>
-              <div id="text-input" class="editor"></div>
-            </div>
-          </div>
-
-          <div class="row center">
-            <a id="create" class="waves-effect waves-light btn"><i class="material-icons right">create</i>作成</a>
-          </div>
-
-          <div class="row">
-            <div class="col s12">
-              <div class="editor-label"><i class="material-icons">note_add</i>SQL</div>
-              <div id="sql-output" class="editor"></div>
-            </div>
-          </div>
-        </form>
+      <div class="field">
+        <label class="field-label" for="table-name">テーブル名</label>
+        <input
+          id="table-name"
+          type="text"
+          class="text-input"
+          placeholder="table_name"
+          autocomplete="off"
+          spellcheck="false"
+        />
       </div>
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    </header>
+
+    <!-- 入力／出力の2ペイン -->
+    <main class="panes">
+      <section class="pane">
+        <div class="pane-head">
+          <span class="pane-title">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <path d="M3 9h18M9 3v18" />
+            </svg>
+            TSVテキスト
+          </span>
+        </div>
+        <div id="text-input" class="editor"></div>
+      </section>
+
+      <section class="pane">
+        <div class="pane-head">
+          <span class="pane-title">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <path d="M14 2v6h6" />
+              <path d="M8 13h8M8 17h8" />
+            </svg>
+            SQL
+          </span>
+          <button id="copy" type="button" class="btn btn-ghost">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="9" y="9" width="13" height="13" rx="2" />
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+            </svg>
+            <span id="copy-label">コピー</span>
+          </button>
+        </div>
+        <div id="sql-output" class="editor"></div>
+      </section>
+    </main>
+
+    <!-- 実行バー -->
+    <footer class="action-bar">
+      <button id="create" type="button" class="btn btn-primary">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 3v18l14-9z" />
+        </svg>
+        作成
+      </button>
+      <span class="hint"><kbd>Ctrl</kbd> + <kbd>Enter</kbd></span>
+    </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js"></script>
     <script src="main.js"></script>
   </body>

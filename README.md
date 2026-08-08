@@ -4,5 +4,4 @@
 
 ## 使用ライブラリ
 
-- [Materialize](https://materializecss.com)
 - [Monaco Editor](https://microsoft.github.io/monaco-editor/)
