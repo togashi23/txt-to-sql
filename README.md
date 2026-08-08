@@ -5,5 +5,4 @@
 ## 使用ライブラリ
 
 - [Materialize](https://materializecss.com)
-- [highlightjs](https://highlightjs.org)
-- [highlightjs-line-numbers](https://github.com/wcoder/highlightjs-line-numbers.js)
+- [Monaco Editor](https://microsoft.github.io/monaco-editor/)

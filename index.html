@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/vs.min.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
@@ -23,10 +22,9 @@
           </div>
 
           <div class="row">
-            <div class="input-field col s12">
-              <i class="material-icons prefix">article</i>
-              <textarea id="text-input" class="materialize-textarea" wrap="off"></textarea>
-              <label for="text-input">TSVテキスト</label>
+            <div class="col s12">
+              <div class="editor-label"><i class="material-icons">article</i>TSVテキスト</div>
+              <div id="text-input" class="editor"></div>
             </div>
           </div>
 
@@ -36,16 +34,15 @@
 
           <div class="row">
             <div class="col s12">
-              <i class="material-icons prefix">note_add</i>
-              <pre class="scroll"><code id="sql-output" class="language-sql" contenteditable="true"></code></pre>
+              <div class="editor-label"><i class="material-icons">note_add</i>SQL</div>
+              <div id="sql-output" class="editor"></div>
             </div>
           </div>
         </form>
       </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js"></script>
     <script src="main.js"></script>
   </body>
 </html>

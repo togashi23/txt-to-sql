@@ -1,3 +1,17 @@
+const MONACO_CDN = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs';
+
+// CDNから読み込む場合、workerは同一オリジンから起動する必要があるためプロキシを挟む
+self.MonacoEnvironment = {
+  getWorkerUrl: () => {
+    const proxy = `self.MonacoEnvironment = { baseUrl: '${MONACO_CDN}/' };
+importScripts('${MONACO_CDN}/base/worker/workerMain.js');`;
+    return 'data:text/javascript;charset=utf-8,' + encodeURIComponent(proxy);
+  },
+};
+
+let inputEditor;
+let outputEditor;
+
 const parseTsv = (str) => {
   let result = [];
   const lineEnd = new RegExp(/\r\n|\n|\r/, 'i');
@@ -18,7 +32,7 @@ const ROWS_PER_INSERT = 1000;
 
 const create = () => {
   const tableName = document.getElementById('table-name').value;
-  const inputText = document.getElementById('text-input').value;
+  const inputText = inputEditor.getValue();
 
   const lines = parseTsv(inputText);
 
@@ -59,11 +73,34 @@ ${insertStr}
 ROLLBACK TRANSACTION;
 -- COMMIT TRANSACTION;`;
 
-  const sqlOutput = document.getElementById('sql-output');
-  sqlOutput.innerHTML = sql;
-  hljs.configure({ ignoreUnescapedHTML: false });
-  hljs.highlightElement(sqlOutput);
-  hljs.lineNumbersBlock(sqlOutput);
+  outputEditor.setValue(sql);
 };
 
-document.getElementById('create').addEventListener('click', create);
+require.config({ paths: { vs: MONACO_CDN } });
+
+require(['vs/editor/editor.main'], () => {
+  const commonOptions = {
+    theme: 'vs',
+    fontSize: 13,
+    automaticLayout: true,
+    minimap: { enabled: false },
+    scrollBeyondLastLine: false,
+    tabSize: 4,
+  };
+
+  inputEditor = monaco.editor.create(document.getElementById('text-input'), {
+    ...commonOptions,
+    value: '',
+    language: 'plaintext',
+    wordWrap: 'off',
+    renderWhitespace: 'all',
+  });
+
+  outputEditor = monaco.editor.create(document.getElementById('sql-output'), {
+    ...commonOptions,
+    value: '',
+    language: 'sql',
+  });
+
+  document.getElementById('create').addEventListener('click', create);
+});
