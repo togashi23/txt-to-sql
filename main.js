@@ -13,6 +13,9 @@ const parseTsv = (str) => {
   return result;
 };
 
+// 1つのINSERT文にまとめる最大行数
+const ROWS_PER_INSERT = 1000;
+
 const create = () => {
   const tableName = document.getElementById('table-name').value;
   const inputText = document.getElementById('text-input').value;
@@ -21,37 +24,37 @@ const create = () => {
 
   const columnNames = lines[0].join(',');
 
-  let insertStr = '';
+  let values = [];
   for (let i = 1; i < lines.length; i++) {
     const line = lines[i];
-    insertStr += '(';
-    line.forEach((c, index, arr) => {
+    const columns = line.map((c) => {
       // エスケープ処理
       const escapedStr = c.replace(/\'/g, "''");
 
       if (escapedStr === 'NULL') {
-        insertStr += '' + escapedStr + ',';
+        return escapedStr;
       } else {
-        insertStr += "'" + escapedStr + "',";
-      }
-
-      // 最終カラムか
-      const isLastColumn = index === arr.length - 1;
-      if (isLastColumn) {
-        insertStr = insertStr.slice(0, -1);
-        insertStr += '),\n';
+        return "'" + escapedStr + "'";
       }
     });
 
-    // 最終行か
-    const isLastLine = i === lines.length - 1;
-    if (isLastLine) {
-      insertStr = insertStr.slice(0, -2) + ';';
-    }
+    values.push('(' + columns.join(',') + ')');
   }
 
+  // 最大行数ごとにINSERT文を分割
+  let statements = [];
+  for (let i = 0; i < values.length; i += ROWS_PER_INSERT) {
+    const chunk = values.slice(i, i + ROWS_PER_INSERT);
+    statements.push(
+      `INSERT INTO ${tableName} (${columnNames}) VALUES\n` +
+        chunk.join(',\n') +
+        ';'
+    );
+  }
+
+  const insertStr = statements.join('\n\n');
+
   const sql = `BEGIN TRANSACTION;
-INSERT INTO ${tableName} (${columnNames}) VALUES
 ${insertStr}
 ROLLBACK TRANSACTION;
 -- COMMIT TRANSACTION;`;
