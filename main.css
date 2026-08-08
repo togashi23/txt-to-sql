@@ -15,9 +15,12 @@
   --bar-height: 56px;
 }
 
+/* ダークテーマ
+   OSの設定（手動で切り替えていない場合のみ）と、切り替えボタンでの明示指定の
+   両方に効かせる必要があるため、同じ内容を2つのセレクタに書いている。
+   surfaceはMonacoのvs-darkの背景色に合わせている。 */
 @media (prefers-color-scheme: dark) {
-  :root {
-    /* surfaceはMonacoのvs-darkの背景色に合わせる */
+  :root:not([data-theme='light']) {
     --bg: #161616;
     --surface: #1e1e1e;
     --border: #313131;
@@ -28,6 +31,18 @@
     --accent-weak: rgba(45, 212, 191, 0.14);
     --shadow: none;
   }
+}
+
+:root[data-theme='dark'] {
+  --bg: #161616;
+  --surface: #1e1e1e;
+  --border: #313131;
+  --text: #e6e8eb;
+  --text-muted: #9199a3;
+  --accent: #2dd4bf;
+  --accent-text: #10312e;
+  --accent-weak: rgba(45, 212, 191, 0.14);
+  --shadow: none;
 }
 
 /* ------------------------------------------------------------------
@@ -278,4 +293,43 @@ kbd {
 .btn-ghost:disabled:hover {
   border-color: var(--border);
   color: var(--text-muted);
+}
+
+/* テーマ切り替えボタン（ヘッダー右端） */
+.btn-icon {
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin-left: auto;
+  border-color: var(--border);
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.btn-icon:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* 現在のテーマ側のアイコンだけを表示する */
+.icon-moon {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .icon-sun {
+    display: none;
+  }
+
+  :root:not([data-theme='light']) .icon-moon {
+    display: block;
+  }
+}
+
+:root[data-theme='dark'] .icon-sun {
+  display: none;
+}
+
+:root[data-theme='dark'] .icon-moon {
+  display: block;
 }

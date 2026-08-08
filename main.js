@@ -12,6 +12,37 @@ importScripts('${MONACO_CDN}/base/worker/workerMain.js');`;
 let inputEditor;
 let outputEditor;
 
+const THEME_KEY = 'txt-to-sql:theme';
+const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+// 手動で切り替えていない間はOSの設定に従う
+const isDark = () => (localStorage.getItem(THEME_KEY) ?? (darkQuery.matches ? 'dark' : 'light')) === 'dark';
+
+// テーマをhtml要素とMonacoの双方へ反映する
+const applyTheme = () => {
+  const dark = isDark();
+  document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+
+  // Monacoの読み込み前はcreate時のオプションで設定されるため何もしない
+  if (window.monaco) {
+    monaco.editor.setTheme(dark ? 'vs-dark' : 'vs');
+  }
+};
+
+applyTheme();
+
+document.getElementById('theme-toggle').addEventListener('click', () => {
+  localStorage.setItem(THEME_KEY, isDark() ? 'light' : 'dark');
+  applyTheme();
+});
+
+// OSの設定変更は、手動で切り替えていない場合のみ反映する
+darkQuery.addEventListener('change', () => {
+  if (!localStorage.getItem(THEME_KEY)) {
+    applyTheme();
+  }
+});
+
 const parseTsv = (str) => {
   let result = [];
   const lineEnd = new RegExp(/\r\n|\n|\r/, 'i');
@@ -95,12 +126,8 @@ const copy = async () => {
 require.config({ paths: { vs: MONACO_CDN } });
 
 require(['vs/editor/editor.main'], () => {
-  // OSのカラースキームにエディタのテーマを合わせる
-  const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
-  const currentTheme = () => (darkQuery.matches ? 'vs-dark' : 'vs');
-
   const commonOptions = {
-    theme: currentTheme(),
+    theme: isDark() ? 'vs-dark' : 'vs',
     padding: { top: 8 },
     fontSize: 13,
     automaticLayout: true,
@@ -121,10 +148,6 @@ require(['vs/editor/editor.main'], () => {
     ...commonOptions,
     value: '',
     language: 'sql',
-  });
-
-  darkQuery.addEventListener('change', () => {
-    monaco.editor.setTheme(currentTheme());
   });
 
   const copyButton = document.getElementById('copy');
