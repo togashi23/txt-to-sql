@@ -151,6 +151,31 @@ body {
   box-shadow: 0 0 0 3px var(--accent-weak);
 }
 
+/* トランザクションの有無を切り替えるチェックボックス */
+.checkbox {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  font-size: 12px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.checkbox input {
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.checkbox input:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-weak);
+}
+
 /* ------------------------------------------------------------------
    2ペイン（狭い画面では縦積み）
    ------------------------------------------------------------------ */

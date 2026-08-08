@@ -99,10 +99,13 @@ const create = () => {
 
   const insertStr = statements.join('\n\n');
 
-  const sql = `BEGIN TRANSACTION;
+  // トランザクションありの場合は、既定でロールバックされるように囲む
+  const sql = document.getElementById('use-transaction').checked
+    ? `BEGIN TRANSACTION;
 ${insertStr}
 ROLLBACK TRANSACTION;
--- COMMIT TRANSACTION;`;
+-- COMMIT TRANSACTION;`
+    : insertStr;
 
   outputEditor.setValue(sql);
 };

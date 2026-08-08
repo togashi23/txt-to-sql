@@ -14,7 +14,7 @@ Excelやスプレッドシートからコピーしたデータをそのまま貼
 - シングルクォートのエスケープ（`'` → `''`）
 - `NULL` と書かれたセルは、クォートせずNULLリテラルとして出力
 - 1000行ごとにINSERT文を分割
-- `BEGIN TRANSACTION` / `ROLLBACK TRANSACTION` で囲んで出力（`COMMIT TRANSACTION` はコメントアウト）
+- `BEGIN TRANSACTION` / `ROLLBACK TRANSACTION` で囲んで出力（`COMMIT TRANSACTION` はコメントアウト）。ヘッダーのチェックボックスで有無を切り替え可能（既定は有り）
 - 生成したSQLをワンクリックでクリップボードへコピー
 - ダーク／ライトテーマの切り替え（初期状態はOSの設定に追従し、手動で切り替えるとその選択を記憶）
 
@@ -45,6 +45,8 @@ ROLLBACK TRANSACTION;
 ```
 
 生成されるSQLは既定でロールバックされます。実際に反映する場合は、`ROLLBACK TRANSACTION;` を削除し、`COMMIT TRANSACTION;` のコメントを外してください。
+
+ヘッダーの「トランザクション」のチェックを外すと、INSERT文のみが出力されます。
 
 ## ローカルでの実行
 
