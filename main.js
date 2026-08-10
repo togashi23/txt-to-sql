@@ -43,6 +43,22 @@ darkQuery.addEventListener('change', () => {
   }
 });
 
+/** DBMSごとのトランザクション構文 */
+const TRANSACTION_SYNTAX = {
+  sqlserver: {
+    begin: 'BEGIN TRANSACTION;',
+    rollback: 'ROLLBACK TRANSACTION;',
+    commit: 'COMMIT TRANSACTION;',
+  },
+  mysql: {
+    begin: 'START TRANSACTION;',
+    rollback: 'ROLLBACK;',
+    commit: 'COMMIT;',
+  },
+};
+
+const dbmsSelect = document.getElementById('dbms');
+
 const parseTsv = (str) => {
   let result = [];
   const lineEnd = new RegExp(/\r\n|\n|\r/, 'i');
@@ -100,11 +116,12 @@ const create = () => {
   const insertStr = statements.join('\n\n');
 
   // トランザクションありの場合は、既定でロールバックされるように囲む
+  const syntax = TRANSACTION_SYNTAX[dbmsSelect.value];
   const sql = document.getElementById('use-transaction').checked
-    ? `BEGIN TRANSACTION;
+    ? `${syntax.begin}
 ${insertStr}
-ROLLBACK TRANSACTION;
--- COMMIT TRANSACTION;`
+${syntax.rollback}
+-- ${syntax.commit}`
     : insertStr;
 
   outputEditor.setValue(sql);

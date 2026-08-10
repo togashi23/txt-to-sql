@@ -30,7 +30,15 @@
         />
       </div>
 
-      <label class="checkbox" title="BEGIN / ROLLBACK TRANSACTION で囲んで出力する">
+      <div class="field field-fixed">
+        <label class="field-label" for="dbms">DBMS</label>
+        <select id="dbms" class="select">
+          <option value="sqlserver">SQL Server</option>
+          <option value="mysql">MySQL</option>
+        </select>
+      </div>
+
+      <label class="checkbox" title="トランザクションで囲んで出力する">
         <input id="use-transaction" type="checkbox" checked />
         トランザクション
       </label>

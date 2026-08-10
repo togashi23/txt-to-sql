@@ -122,6 +122,12 @@ body {
   max-width: 420px;
 }
 
+/* 幅を内容に合わせる項目（DBMS選択など） */
+.field-fixed {
+  flex: none;
+  max-width: none;
+}
+
 .field-label {
   flex: none;
   color: var(--text-muted);
@@ -146,6 +152,25 @@ body {
 }
 
 .text-input:focus {
+  border-color: var(--accent);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-weak);
+}
+
+/* DBMSを選ぶセレクトボックス */
+.select {
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.select:focus {
   border-color: var(--accent);
   outline: none;
   box-shadow: 0 0 0 3px var(--accent-weak);
