@@ -1,3 +1,8 @@
+// Monacoは非同期に読み込まれるため、読み込み済みかどうかをwindow経由で判定する
+interface Window {
+  monaco?: typeof monaco;
+}
+
 const MONACO_CDN = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs';
 
 // CDNから読み込む場合、workerは同一オリジンから起動する必要があるためプロキシを挟む
@@ -9,17 +14,29 @@ importScripts('${MONACO_CDN}/base/worker/workerMain.js');`;
   },
 };
 
-let inputEditor;
-let outputEditor;
+/** IDから要素を取得する（存在しない場合は例外） */
+const getElement = <T extends HTMLElement>(id: string): T => {
+  const element = document.getElementById(id);
+
+  if (!element) {
+    throw new Error(`要素が見つかりません: ${id}`);
+  }
+
+  return element as T;
+};
+
+// エディタの生成前は参照されない
+let inputEditor!: monaco.editor.IStandaloneCodeEditor;
+let outputEditor!: monaco.editor.IStandaloneCodeEditor;
 
 const THEME_KEY = 'txt-to-sql:theme';
 const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
 // 手動で切り替えていない間はOSの設定に従う
-const isDark = () => (localStorage.getItem(THEME_KEY) ?? (darkQuery.matches ? 'dark' : 'light')) === 'dark';
+const isDark = (): boolean => (localStorage.getItem(THEME_KEY) ?? (darkQuery.matches ? 'dark' : 'light')) === 'dark';
 
 // テーマをhtml要素とMonacoの双方へ反映する
-const applyTheme = () => {
+const applyTheme = (): void => {
   const dark = isDark();
   document.documentElement.dataset.theme = dark ? 'dark' : 'light';
 
@@ -31,7 +48,7 @@ const applyTheme = () => {
 
 applyTheme();
 
-document.getElementById('theme-toggle').addEventListener('click', () => {
+getElement('theme-toggle').addEventListener('click', () => {
   localStorage.setItem(THEME_KEY, isDark() ? 'light' : 'dark');
   applyTheme();
 });
@@ -43,8 +60,18 @@ darkQuery.addEventListener('change', () => {
   }
 });
 
+/** 対応しているDBMS */
+type Dbms = 'sqlserver' | 'mysql';
+
+/** トランザクション構文 */
+interface TransactionSyntax {
+  begin: string;
+  rollback: string;
+  commit: string;
+}
+
 /** DBMSごとのトランザクション構文 */
-const TRANSACTION_SYNTAX = {
+const TRANSACTION_SYNTAX: Record<Dbms, TransactionSyntax> = {
   sqlserver: {
     begin: 'BEGIN TRANSACTION;',
     rollback: 'ROLLBACK TRANSACTION;',
@@ -57,10 +84,10 @@ const TRANSACTION_SYNTAX = {
   },
 };
 
-const dbmsSelect = document.getElementById('dbms');
+const dbmsSelect = getElement<HTMLSelectElement>('dbms');
 
-const parseTsv = (str) => {
-  let result = [];
+const parseTsv = (str: string): string[][] => {
+  let result: string[][] = [];
   const lineEnd = new RegExp(/\r\n|\n|\r/, 'i');
   const columnSeparator = new RegExp(/\t/, 'i');
 
@@ -77,15 +104,15 @@ const parseTsv = (str) => {
 // 1つのINSERT文にまとめる最大行数
 const ROWS_PER_INSERT = 1000;
 
-const create = () => {
-  const tableName = document.getElementById('table-name').value;
+const create = (): void => {
+  const tableName = getElement<HTMLInputElement>('table-name').value;
   const inputText = inputEditor.getValue();
 
   const lines = parseTsv(inputText);
 
   const columnNames = lines[0].join(',');
 
-  let values = [];
+  let values: string[] = [];
   for (let i = 1; i < lines.length; i++) {
     const line = lines[i];
     const columns = line.map((c) => {
@@ -103,21 +130,17 @@ const create = () => {
   }
 
   // 最大行数ごとにINSERT文を分割
-  let statements = [];
+  let statements: string[] = [];
   for (let i = 0; i < values.length; i += ROWS_PER_INSERT) {
     const chunk = values.slice(i, i + ROWS_PER_INSERT);
-    statements.push(
-      `INSERT INTO ${tableName} (${columnNames}) VALUES\n` +
-        chunk.join(',\n') +
-        ';'
-    );
+    statements.push(`INSERT INTO ${tableName} (${columnNames}) VALUES\n` + chunk.join(',\n') + ';');
   }
 
   const insertStr = statements.join('\n\n');
 
   // トランザクションありの場合は、既定でロールバックされるように囲む
-  const syntax = TRANSACTION_SYNTAX[dbmsSelect.value];
-  const sql = document.getElementById('use-transaction').checked
+  const syntax = TRANSACTION_SYNTAX[dbmsSelect.value as Dbms];
+  const sql = getElement<HTMLInputElement>('use-transaction').checked
     ? `${syntax.begin}
 ${insertStr}
 ${syntax.rollback}
@@ -128,8 +151,8 @@ ${syntax.rollback}
 };
 
 // SQLをクリップボードへコピーし、ボタンのラベルで結果を知らせる
-const copy = async () => {
-  const label = document.getElementById('copy-label');
+const copy = async (): Promise<void> => {
+  const label = getElement('copy-label');
 
   try {
     await navigator.clipboard.writeText(outputEditor.getValue());
@@ -146,7 +169,7 @@ const copy = async () => {
 require.config({ paths: { vs: MONACO_CDN } });
 
 require(['vs/editor/editor.main'], () => {
-  const commonOptions = {
+  const commonOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
     theme: isDark() ? 'vs-dark' : 'vs',
     padding: { top: 8 },
     fontSize: 13,
@@ -156,7 +179,7 @@ require(['vs/editor/editor.main'], () => {
     tabSize: 4,
   };
 
-  inputEditor = monaco.editor.create(document.getElementById('text-input'), {
+  inputEditor = monaco.editor.create(getElement('text-input'), {
     ...commonOptions,
     value: '',
     language: 'plaintext',
@@ -164,22 +187,22 @@ require(['vs/editor/editor.main'], () => {
     renderWhitespace: 'all',
   });
 
-  outputEditor = monaco.editor.create(document.getElementById('sql-output'), {
+  outputEditor = monaco.editor.create(getElement('sql-output'), {
     ...commonOptions,
     value: '',
     language: 'sql',
   });
 
-  const copyButton = document.getElementById('copy');
+  const copyButton = getElement<HTMLButtonElement>('copy');
 
   // SQLが空のうちはコピーボタンを無効にしておく
-  const syncCopyButton = () => {
+  const syncCopyButton = (): void => {
     copyButton.disabled = outputEditor.getValue() === '';
   };
   outputEditor.onDidChangeModelContent(syncCopyButton);
   syncCopyButton();
 
-  document.getElementById('create').addEventListener('click', create);
+  getElement('create').addEventListener('click', create);
   copyButton.addEventListener('click', copy);
 
   // Ctrl + Enter で作成（エディタ側の既定の割り当てを上書きする）
@@ -187,7 +210,7 @@ require(['vs/editor/editor.main'], () => {
   inputEditor.addCommand(createKeybinding, create);
   outputEditor.addCommand(createKeybinding, create);
 
-  document.getElementById('table-name').addEventListener('keydown', (e) => {
+  getElement('table-name').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       create();

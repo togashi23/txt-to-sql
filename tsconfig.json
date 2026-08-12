@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "module": "es2022",
+    "strict": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmitOnError": true,
+    "sourceMap": true,
+    // AMDローダー（require）の型定義
+    "types": ["requirejs"]
+  },
+  // Monacoの型定義はグローバル（monacoネームスペース）として読み込む
+  "include": ["main.ts", "node_modules/monaco-editor/monaco.d.ts"]
+}

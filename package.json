@@ -1,0 +1,24 @@
+{
+  "name": "txt-to-sql",
+  "version": "1.0.0",
+  "description": "Excelやスプレッドシートからコピーしたデータをそのまま貼り付けて、テスト用のINSERT文を手早く用意するためのツールです。",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/togashi23/txt-to-sql.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/togashi23/txt-to-sql/issues"
+  },
+  "homepage": "https://github.com/togashi23/txt-to-sql#readme",
+  "devDependencies": {
+    "@types/requirejs": "^2.1.37",
+    "monaco-editor": "^0.52.2",
+    "typescript": "^7.0.2"
+  }
+}
