@@ -16,6 +16,9 @@
     "url": "https://github.com/togashi23/txt-to-sql/issues"
   },
   "homepage": "https://github.com/togashi23/txt-to-sql#readme",
+  "engines": {
+    "node": ">=24"
+  },
   "devDependencies": {
     "@types/requirejs": "^2.1.37",
     "monaco-editor": "^0.52.2",
