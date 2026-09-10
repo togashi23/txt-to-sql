@@ -1,6 +1,10 @@
+import { buildInsertSql, type Dbms } from './sql.js';
+
 // Monacoの読み込み状態をwindow経由で判定する
-interface Window {
-  monaco?: typeof monaco;
+declare global {
+  interface Window {
+    monaco?: typeof monaco;
+  }
 }
 
 const MONACO_CDN = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs';
@@ -55,86 +59,12 @@ darkQuery.addEventListener('change', () => {
   }
 });
 
-type Dbms = 'sqlserver' | 'mysql';
-
-interface TransactionSyntax {
-  begin: string;
-  rollback: string;
-  commit: string;
-}
-
-const TRANSACTION_SYNTAX: Record<Dbms, TransactionSyntax> = {
-  sqlserver: {
-    begin: 'BEGIN TRANSACTION;',
-    rollback: 'ROLLBACK TRANSACTION;',
-    commit: 'COMMIT TRANSACTION;',
-  },
-  mysql: {
-    begin: 'START TRANSACTION;',
-    rollback: 'ROLLBACK;',
-    commit: 'COMMIT;',
-  },
-};
-
-const dbmsSelect = getElement<HTMLSelectElement>('dbms');
-
-const parseTsv = (str: string): string[][] => {
-  let result: string[][] = [];
-  const lineEnd = new RegExp(/\r\n|\n|\r/, 'i');
-  const columnSeparator = new RegExp(/\t/, 'i');
-
-  const lines = str.split(lineEnd);
-
-  lines.forEach((line) => {
-    const column = line.split(columnSeparator);
-    result.push(column);
-  });
-
-  return result;
-};
-
-const ROWS_PER_INSERT = 1000;
-
 const create = (): void => {
-  const tableName = getElement<HTMLInputElement>('table-name').value;
-  const inputText = inputEditor.getValue();
-
-  const lines = parseTsv(inputText);
-
-  const columnNames = lines[0].join(',');
-
-  let values: string[] = [];
-  for (let i = 1; i < lines.length; i++) {
-    const line = lines[i];
-    const columns = line.map((c) => {
-      const escapedStr = c.replace(/\'/g, "''");
-
-      if (escapedStr === 'NULL') {
-        return escapedStr;
-      } else {
-        return "'" + escapedStr + "'";
-      }
-    });
-
-    values.push('(' + columns.join(',') + ')');
-  }
-
-  let statements: string[] = [];
-  for (let i = 0; i < values.length; i += ROWS_PER_INSERT) {
-    const chunk = values.slice(i, i + ROWS_PER_INSERT);
-    statements.push(`INSERT INTO ${tableName} (${columnNames}) VALUES\n` + chunk.join(',\n') + ';');
-  }
-
-  const insertStr = statements.join('\n\n');
-
-  // 誤実行を避けるため、トランザクションは既定でロールバックする
-  const syntax = TRANSACTION_SYNTAX[dbmsSelect.value as Dbms];
-  const sql = getElement<HTMLInputElement>('use-transaction').checked
-    ? `${syntax.begin}
-${insertStr}
-${syntax.rollback}
--- ${syntax.commit}`
-    : insertStr;
+  const sql = buildInsertSql(inputEditor.getValue(), {
+    tableName: getElement<HTMLInputElement>('table-name').value,
+    dbms: getElement<HTMLSelectElement>('dbms').value as Dbms,
+    useTransaction: getElement<HTMLInputElement>('use-transaction').checked,
+  });
 
   outputEditor.setValue(sql);
 };
