@@ -1,11 +1,11 @@
-// Monacoは非同期に読み込まれるため、読み込み済みかどうかをwindow経由で判定する
+// Monacoの読み込み状態をwindow経由で判定する
 interface Window {
   monaco?: typeof monaco;
 }
 
 const MONACO_CDN = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs';
 
-// CDNから読み込む場合、workerは同一オリジンから起動する必要があるためプロキシを挟む
+// CDN上のWorkerを同一オリジンのdata URL経由で起動する
 self.MonacoEnvironment = {
   getWorkerUrl: () => {
     const proxy = `self.MonacoEnvironment = { baseUrl: '${MONACO_CDN}/' };
@@ -14,7 +14,6 @@ importScripts('${MONACO_CDN}/base/worker/workerMain.js');`;
   },
 };
 
-/** IDから要素を取得する（存在しない場合は例外） */
 const getElement = <T extends HTMLElement>(id: string): T => {
   const element = document.getElementById(id);
 
@@ -25,22 +24,19 @@ const getElement = <T extends HTMLElement>(id: string): T => {
   return element as T;
 };
 
-// エディタの生成前は参照されない
 let inputEditor!: monaco.editor.IStandaloneCodeEditor;
 let outputEditor!: monaco.editor.IStandaloneCodeEditor;
 
 const THEME_KEY = 'txt-to-sql:theme';
 const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
-// 手動で切り替えていない間はOSの設定に従う
 const isDark = (): boolean => (localStorage.getItem(THEME_KEY) ?? (darkQuery.matches ? 'dark' : 'light')) === 'dark';
 
-// テーマをhtml要素とMonacoの双方へ反映する
 const applyTheme = (): void => {
   const dark = isDark();
   document.documentElement.dataset.theme = dark ? 'dark' : 'light';
 
-  // Monacoの読み込み前はcreate時のオプションで設定されるため何もしない
+  // 読み込み前のMonacoには生成時にテーマを渡す
   if (window.monaco) {
     monaco.editor.setTheme(dark ? 'vs-dark' : 'vs');
   }
@@ -53,24 +49,20 @@ getElement('theme-toggle').addEventListener('click', () => {
   applyTheme();
 });
 
-// OSの設定変更は、手動で切り替えていない場合のみ反映する
 darkQuery.addEventListener('change', () => {
   if (!localStorage.getItem(THEME_KEY)) {
     applyTheme();
   }
 });
 
-/** 対応しているDBMS */
 type Dbms = 'sqlserver' | 'mysql';
 
-/** トランザクション構文 */
 interface TransactionSyntax {
   begin: string;
   rollback: string;
   commit: string;
 }
 
-/** DBMSごとのトランザクション構文 */
 const TRANSACTION_SYNTAX: Record<Dbms, TransactionSyntax> = {
   sqlserver: {
     begin: 'BEGIN TRANSACTION;',
@@ -101,7 +93,6 @@ const parseTsv = (str: string): string[][] => {
   return result;
 };
 
-// 1つのINSERT文にまとめる最大行数
 const ROWS_PER_INSERT = 1000;
 
 const create = (): void => {
@@ -116,7 +107,6 @@ const create = (): void => {
   for (let i = 1; i < lines.length; i++) {
     const line = lines[i];
     const columns = line.map((c) => {
-      // エスケープ処理
       const escapedStr = c.replace(/\'/g, "''");
 
       if (escapedStr === 'NULL') {
@@ -129,7 +119,6 @@ const create = (): void => {
     values.push('(' + columns.join(',') + ')');
   }
 
-  // 最大行数ごとにINSERT文を分割
   let statements: string[] = [];
   for (let i = 0; i < values.length; i += ROWS_PER_INSERT) {
     const chunk = values.slice(i, i + ROWS_PER_INSERT);
@@ -138,7 +127,7 @@ const create = (): void => {
 
   const insertStr = statements.join('\n\n');
 
-  // トランザクションありの場合は、既定でロールバックされるように囲む
+  // 誤実行を避けるため、トランザクションは既定でロールバックする
   const syntax = TRANSACTION_SYNTAX[dbmsSelect.value as Dbms];
   const sql = getElement<HTMLInputElement>('use-transaction').checked
     ? `${syntax.begin}
@@ -150,7 +139,6 @@ ${syntax.rollback}
   outputEditor.setValue(sql);
 };
 
-// SQLをクリップボードへコピーし、ボタンのラベルで結果を知らせる
 const copy = async (): Promise<void> => {
   const label = getElement('copy-label');
 
@@ -195,7 +183,6 @@ require(['vs/editor/editor.main'], () => {
 
   const copyButton = getElement<HTMLButtonElement>('copy');
 
-  // SQLが空のうちはコピーボタンを無効にしておく
   const syncCopyButton = (): void => {
     copyButton.disabled = outputEditor.getValue() === '';
   };
@@ -205,7 +192,7 @@ require(['vs/editor/editor.main'], () => {
   getElement('create').addEventListener('click', create);
   copyButton.addEventListener('click', copy);
 
-  // Ctrl + Enter で作成（エディタ側の既定の割り当てを上書きする）
+  // Monaco既定の割り当てを上書きする
   const createKeybinding = monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter;
   inputEditor.addCommand(createKeybinding, create);
   outputEditor.addCommand(createKeybinding, create);
