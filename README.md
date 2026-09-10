@@ -69,7 +69,7 @@ npm ci
 npm run build
 ```
 
-`main.ts` から `main.js` が生成されたら、Docker Composeでhttpdを起動し、<http://localhost> を開きます。
+`dist` にビルド結果が出力されたら、Docker Composeでhttpdを起動し、<http://localhost> を開きます。
 
 ```sh
 docker compose up
@@ -77,14 +77,10 @@ docker compose up
 
 ## 開発
 
-`main.js` は `main.ts` から生成されるため、直接編集せずGit管理からも除外しています。
-
 ```sh
 npm run build   # 1回だけビルドする
 npm run watch   # 変更を監視して自動でビルドする
 ```
-
-Netlifyへのデプロイ時は `netlify.toml` の設定により `npm run build` が実行されます。
 
 ## 使用ライブラリ
 

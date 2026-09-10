@@ -4,8 +4,9 @@
   "description": "Excelやスプレッドシートからコピーしたデータをそのまま貼り付けて、テスト用のINSERT文を手早く用意するためのツールです。",
   "private": true,
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc --watch"
+    "build": "tsc && npm run copy",
+    "watch": "npm run copy && tsc --watch",
+    "copy": "node -e \"require('fs').cpSync('src', 'dist', { recursive: true, filter: (f) => !f.endsWith('.ts') })\""
   },
   "repository": {
     "type": "git",
