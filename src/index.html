@@ -7,7 +7,6 @@
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
   </head>
   <body>
-    <!-- ヘッダー兼ツールバー -->
     <header class="app-bar">
       <h1 class="app-title">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -56,7 +55,6 @@
       </button>
     </header>
 
-    <!-- 入力／出力の2ペイン -->
     <main class="panes">
       <section class="pane">
         <div class="pane-head">
@@ -93,7 +91,6 @@
       </section>
     </main>
 
-    <!-- 実行バー -->
     <footer class="action-bar">
       <button id="create" type="button" class="btn btn-primary">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -105,6 +102,6 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js"></script>
-    <script src="main.js"></script>
+    <script type="module" src="main.js"></script>
   </body>
 </html>
