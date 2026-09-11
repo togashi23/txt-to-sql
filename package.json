@@ -1,7 +1,7 @@
 {
   "name": "txt-to-sql",
   "version": "1.0.0",
-  "description": "Excelやスプレッドシートからコピーしたデータをそのまま貼り付けて、テスト用のINSERT文を手早く用意するためのツールです。",
+  "description": "ExcelやスプレッドシートからコピーしたTSVをそのまま貼り付けて、INSERT文を手早く用意するためのWebアプリ。",
   "private": true,
   "scripts": {
     "build": "tsc && npm run copy",
