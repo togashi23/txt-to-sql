@@ -9,7 +9,6 @@
   --accent-text: #ffffff;
   --accent-weak: rgba(15, 118, 110, 0.12);
   --shadow: 0 1px 2px rgba(16, 24, 40, 0.06);
-  --radius: 8px;
   --bar-height: 56px;
 }
 
@@ -123,16 +122,20 @@ body {
   font-size: 12px;
 }
 
-.text-input {
-  width: 100%;
+.text-input,
+.select {
   height: 32px;
-  padding: 0 10px;
   border: 1px solid var(--border);
   border-radius: 6px;
   background: var(--bg);
   color: var(--text);
   font-family: inherit;
   font-size: 13px;
+}
+
+.text-input {
+  width: 100%;
+  padding: 0 10px;
 }
 
 .text-input::placeholder {
@@ -140,24 +143,12 @@ body {
   opacity: 0.7;
 }
 
-.text-input:focus {
-  border-color: var(--accent);
-  outline: none;
-  box-shadow: 0 0 0 3px var(--accent-weak);
-}
-
 .select {
-  height: 32px;
   padding: 0 8px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--bg);
-  color: var(--text);
-  font-family: inherit;
-  font-size: 13px;
   cursor: pointer;
 }
 
+.text-input:focus,
 .select:focus {
   border-color: var(--accent);
   outline: none;
@@ -302,18 +293,23 @@ kbd {
   filter: brightness(0.94);
 }
 
-.btn-ghost {
-  height: 26px;
-  padding: 0 8px;
+.btn-ghost,
+.btn-icon {
   border-color: var(--border);
   background: transparent;
   color: var(--text-muted);
-  font-size: 12px;
 }
 
-.btn-ghost:hover {
+.btn-ghost:not(:disabled):hover,
+.btn-icon:hover {
   border-color: var(--accent);
   color: var(--accent);
+}
+
+.btn-ghost {
+  height: 26px;
+  padding: 0 8px;
+  font-size: 12px;
 }
 
 .btn-ghost:disabled {
@@ -321,24 +317,11 @@ kbd {
   cursor: default;
 }
 
-.btn-ghost:disabled:hover {
-  border-color: var(--border);
-  color: var(--text-muted);
-}
-
 .btn-icon {
   justify-content: center;
   width: 32px;
   height: 32px;
   margin-left: auto;
-  border-color: var(--border);
-  background: transparent;
-  color: var(--text-muted);
-}
-
-.btn-icon:hover {
-  border-color: var(--accent);
-  color: var(--accent);
 }
 
 .icon-moon {
