@@ -1,30 +1,44 @@
-# txt-to-sql
+<p align="center">
+  <img src="src/icon.svg" width="180" alt="txt-to-sql" />
+</p>
 
-Excelやスプレッドシートからコピーしたデータをそのまま貼り付けて、テスト用のINSERT文を手早く用意するためのツールです。
+<h1 align="center">txt-to-sql</h1>
 
-![capture](https://github.com/user-attachments/assets/2093f627-b643-4033-a9a9-7f78ddacfa49)
+<p align="center">ExcelやスプレッドシートからコピーしたTSVをそのまま貼り付けて、INSERT文を手早く用意するためのWebアプリ。</p>
 
-## URL
+<p align="center">
+  <a href="https://txt-to-sql.netlify.app">Website</a>
+</p>
 
-<https://txt-to-sql.netlify.app>
+<p align="center">
+  <img src="https://api.netlify.com/api/v1/badges/10b11c90-a13e-4abb-abf9-28da8b8f21aa/deploy-status" alt="Netlify Status" />
+  <img src="https://img.shields.io/badge/license-MIT-blue" alt="License" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/2093f627-b643-4033-a9a9-7f78ddacfa49" width="720" alt="capture" />
+</p>
+
+---
 
 ## 機能
 
-- TSVテキストからINSERT文を生成（1行目をカラム名、2行目以降を値として扱う）
-- シングルクォートのエスケープ（`'` → `''`）
+- TSVテキストからINSERT文を生成(1行目をカラム名、2行目以降を値として扱う)
+- シングルクォートのエスケープ(`'` → `''`)
 - `NULL` と書かれたセルは、クォートせずNULLリテラルとして出力
 - 1000行ごとにINSERT文を分割
-- トランザクションで囲んで出力（ロールバックが既定で、コミットはコメントアウト）。ヘッダーのチェックボックスで有無を切り替え可能（既定は有り）
-- SQL ServerとMySQLのトランザクション構文に対応。ヘッダーのDBMS選択で切り替え可能
+- トランザクションで囲んで出力
+- SQL ServerとMySQLのトランザクション構文に対応
 - 生成したSQLをワンクリックでクリップボードへコピー
-- ダーク／ライトテーマの切り替え（初期状態はOSの設定に追従し、手動で切り替えるとその選択を記憶）
+- ダーク/ライトテーマの切り替え
 
 ## 使い方
 
-1. テーブル名を入力する
-2. 左のエディタにTSVテキストを貼り付ける（1行目はカラム名）
-3. 「作成」ボタン、または <kbd>Ctrl</kbd> + <kbd>Enter</kbd> を押す
-4. 右のエディタに生成されたSQLを「コピー」ボタンで取得する
+1. Webサイトにアクセス
+2. テーブル名を入力する
+3. 左のエディタにTSVテキストを貼り付ける(1行目はカラム名)
+4. 「作成」ボタン、または <kbd>Ctrl</kbd> + <kbd>Enter</kbd> を押す
+5. 右のエディタに生成されたSQLを「コピー」ボタンで取得する
 
 ### 入力例
 
@@ -57,31 +71,25 @@ ROLLBACK;
 ```
 
 生成されるSQLは既定でロールバックされます。実際に反映する場合は、ロールバックの行を削除し、コミットの行のコメントを外してください。
-
 ヘッダーの「トランザクション」のチェックを外すと、INSERT文のみが出力されます。
 
-## ローカルでの実行
+## 開発
 
 TypeScriptで書かれているため、初回は依存関係のインストールとビルドが必要です。
 
 ```sh
-npm ci
+# 依存ライブラリをインストール
+npm install
+
+# ビルド
 npm run build
-```
 
-`dist` にビルド結果が出力されたら、Docker Composeでhttpdを起動し、<http://localhost> を開きます。
-
-```sh
+# Docker ComposeでWEBサーバーを起動
 docker compose up
-```
-
-## 開発
-
-```sh
-npm run build   # 1回だけビルドする
-npm run watch   # 変更を監視して自動でビルドする
 ```
 
 ## 使用ライブラリ
 
-- [Monaco Editor](https://microsoft.github.io/monaco-editor/)（CDNから読み込み。ローカルの `monaco-editor` は型定義のみに使用）
+- [Monaco Editor](https://microsoft.github.io/monaco-editor/)
+
+  CDNから読み込み。ローカルの `monaco-editor` は型定義のみに使用。
