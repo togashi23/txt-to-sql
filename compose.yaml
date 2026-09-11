@@ -1,7 +1,0 @@
-services:
-  httpd:
-    image: httpd
-    ports:
-      - 80:80
-    volumes:
-      - ./dist:/usr/local/apache2/htdocs/

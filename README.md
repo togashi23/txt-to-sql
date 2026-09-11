@@ -83,9 +83,6 @@ npm install
 
 # ビルド
 npm run build
-
-# Docker ComposeでWEBサーバーを起動
-docker compose up
 ```
 
 ## 使用ライブラリ
