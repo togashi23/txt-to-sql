@@ -2,11 +2,14 @@ import 'monaco-editor/esm/vs/editor/edcore.main.js';
 import 'monaco-editor/esm/vs/basic-languages/sql/sql.contribution.js';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
 import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker.js?worker';
+import { Copy, createIcons, FileText, Moon, Play, Sun, Table2 } from 'lucide';
 import { buildInsertSql, type Dbms } from './sql.js';
 
 self.MonacoEnvironment = {
   getWorker: () => new EditorWorker(),
 };
+
+createIcons({ icons: { Copy, FileText, Moon, Play, Sun, Table2 } });
 
 const getElement = <T extends HTMLElement>(id: string): T => {
   const element = document.getElementById(id);

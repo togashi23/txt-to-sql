@@ -22,6 +22,7 @@
     "node": ">=24"
   },
   "devDependencies": {
+    "lucide": "^1.45.0",
     "monaco-editor": "^0.52.2",
     "typescript": "^7.0.2",
     "vite": "^8.3.0"
