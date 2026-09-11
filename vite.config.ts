@@ -5,5 +5,7 @@ export default defineConfig({
   build: {
     outDir: '../dist',
     emptyOutDir: true,
+    license: true,
+    rolldownOptions: { output: { comments: { legal: true } } },
   },
 });
