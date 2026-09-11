@@ -5,7 +5,7 @@ export default defineConfig({
   build: {
     outDir: '../dist',
     emptyOutDir: true,
-    license: true,
+    license: { fileName: 'licenses.md' },
     rolldownOptions: { output: { comments: { legal: true } } },
   },
 });
