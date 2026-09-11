@@ -1,8 +1,21 @@
-# txt-to-sql
+<p align="center">
+  <img src="src/icon.svg" width="180" alt="txt-to-sql" />
+</p>
 
-Excelやスプレッドシートからコピーしたデータをそのまま貼り付けて、テスト用のINSERT文を手早く用意するためのツールです。
+<h1 align="center">txt-to-sql</h1>
 
-![capture](https://github.com/user-attachments/assets/2093f627-b643-4033-a9a9-7f78ddacfa49)
+<p align="center">ExcelやスプレッドシートからコピーしたTSVをそのまま貼り付けて、INSERT文を手早く用意するためのWebアプリ。</p>
+
+<p align="center">
+  <img src="https://api.netlify.com/api/v1/badges/10b11c90-a13e-4abb-abf9-28da8b8f21aa/deploy-status" alt="Netlify Status" />
+  <img src="https://img.shields.io/badge/license-MIT-blue" alt="License" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/2093f627-b643-4033-a9a9-7f78ddacfa49" width="720" alt="capture" />
+</p>
+
+---
 
 ## URL
 
