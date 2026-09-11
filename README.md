@@ -81,12 +81,9 @@ TypeScriptで書かれているため、初回は依存関係のインストー�
 # 依存ライブラリをインストール
 npm install
 
+# 開発サーバーを起動
+npm run dev
+
 # ビルド
 npm run build
 ```
-
-## 使用ライブラリ
-
-- [Monaco Editor](https://microsoft.github.io/monaco-editor/)
-
-  CDNから読み込み。ローカルの `monaco-editor` は型定義のみに使用。

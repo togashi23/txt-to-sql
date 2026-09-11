@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "description": "ExcelやスプレッドシートからコピーしたTSVをそのまま貼り付けて、INSERT文を手早く用意するためのWebアプリ。",
   "private": true,
+  "type": "module",
   "scripts": {
-    "build": "tsc && npm run copy",
-    "watch": "npm run copy && tsc --watch",
-    "copy": "node -e \"require('fs').cpSync('src', 'dist', { recursive: true, filter: (f) => !f.endsWith('.ts') })\""
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
   },
   "repository": {
     "type": "git",
@@ -21,8 +22,8 @@
     "node": ">=24"
   },
   "devDependencies": {
-    "@types/requirejs": "^2.1.37",
     "monaco-editor": "^0.52.2",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0"
   }
 }
