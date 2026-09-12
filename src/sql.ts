@@ -1,4 +1,4 @@
-export type Dbms = 'sqlserver' | 'mysql';
+export type Dbms = 'sqlserver' | 'mysql' | 'postgresql';
 
 interface TransactionSyntax {
   begin: string;
@@ -14,6 +14,11 @@ const TRANSACTION_SYNTAX: Record<Dbms, TransactionSyntax> = {
   },
   mysql: {
     begin: 'START TRANSACTION;',
+    rollback: 'ROLLBACK;',
+    commit: 'COMMIT;',
+  },
+  postgresql: {
+    begin: 'BEGIN;',
     rollback: 'ROLLBACK;',
     commit: 'COMMIT;',
   },

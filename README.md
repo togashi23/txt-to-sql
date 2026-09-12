@@ -28,7 +28,7 @@
 - `NULL` と書かれたセルは、クォートせずNULLリテラルとして出力
 - 1000行ごとにINSERT文を分割
 - トランザクションで囲んで出力
-- SQL ServerとMySQLのトランザクション構文に対応
+- SQL Server、MySQL、PostgreSQLのトランザクション構文に対応
 - 生成したSQLをワンクリックでクリップボードへコピー
 - ダーク/ライトテーマの切り替え
 
@@ -63,6 +63,17 @@ ROLLBACK TRANSACTION;
 
 ```sql
 START TRANSACTION;
+INSERT INTO users (id,name,email) VALUES
+('1','山田太郎','yamada@example.com'),
+('2','鈴木花子',NULL);
+ROLLBACK;
+-- COMMIT;
+```
+
+### 出力例（PostgreSQL）
+
+```sql
+BEGIN;
 INSERT INTO users (id,name,email) VALUES
 ('1','山田太郎','yamada@example.com'),
 ('2','鈴木花子',NULL);
